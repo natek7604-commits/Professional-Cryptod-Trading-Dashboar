@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Crypto Trading Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e17;
+            --card: #131a2e;
+            --accent: #00e676;
+            --secondary: #2979ff;
+            --danger: #ff5252;
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border-radius: 12px;
+            --shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .last-update {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--card);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            color: var(--secondary);
+            font-size: 20px;
+        }
+
+        .ticker-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 0;
+            gap: 20px;
+        }
+
+        .ticker-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+
+        .ticker-symbol {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .ticker-price {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .ticker-change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .positive {
+            color: var(--accent);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .signal-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .signal-item:last-child {
+            border-bottom: none;
+        }
+
+        .signal-symbol {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .signal-action {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .signal-buy {
+            background-color: rgba(0, 230, 118, 0.2);
+            color: var(--accent);
+        }
+
+        .signal-sell {
+            background-color: rgba(255, 82, 82, 0.2);
+            color: var(--danger);
+        }
+
+        .signal-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .market-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .fear-greed-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .fear-greed-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .fear-greed-label {
+            font-size: 14px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .fear-greed-extreme-fear {
+            background-color: rgba(255, 82, 82, 0.2);
+            color: var(--danger);
+        }
+
+        .fear-greed-fear {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .fear-greed-neutral {
+            background-color: rgba(255, 235, 59, 0.2);
+            color: #ffeb3b;
+        }
+
+        .fear-greed-greed {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .fear-greed-extreme-greed {
+            background-color: rgba(0, 230, 118, 0.2);
+            color: var(--accent);
+        }
+
+        .futures-data {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .futures-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .futures-item:last-child {
+            border-bottom: none;
+        }
+
+        .whale-trade {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .whale-trade:last-child {
+            border-bottom: none;
+        }
+
+        .whale-symbol {
+            font-weight: 600;
+        }
+
+        .whale-amount {
+            font-size: 14px;
+        }
+
+        .whale-type {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .whale-buy {
+            background-color: rgba(0, 230, 118, 0.2);
+            color: var(--accent);
+        }
+
+        .whale-sell {
+            background-color: rgba(255, 82, 82, 0.2);
+            color: var(--danger);
+        }
+
+        .macro-market {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .macro-market:last-child {
+            border-bottom: none;
+        }
+
+        .gainers-losers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .gl-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gl-item:last-child {
+            border-bottom: none;
+        }
+
+        .gl-name {
+            font-weight: 600;
+        }
+
+        .news-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-source {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .sentiment-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sentiment-item:last-child {
+            border-bottom: none;
+        }
+
+        .sentiment-name {
+            font-weight: 600;
+        }
+
+        .sentiment-value {
+            font-size: 14px;
+        }
+
+        .calendar-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .calendar-item:last-child {
+            border-bottom: none;
+        }
+
+        .calendar-event {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .calendar-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 16px;
+            margin-bottom: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background-color: var(--card);
+            color: var(--text);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-buy {
+            border-left: 4px solid var(--accent);
+        }
+
+        .toast-sell {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .active-trades {
+            margin-top: 30px;
+        }
+
+        .trades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .trades-table th,
+        .trades-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trades-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .trade-pnl.positive {
+            color: var(--accent);
+        }
+
+        .trade-pnl.negative {
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ticker-container {
+                gap: 15px;
+            }
+
+            .ticker-item {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">CRYPTO TRADER PRO</div>
+            <div class="last-update">Last Update: <span id="last-update-time">Loading...</span></div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Live Ticker -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Live Ticker</div>
+                    <div class="card-icon">📈</div>
+                </div>
+                <div class="ticker-container" id="ticker-container">
+                    <!-- Ticker items will be populated by JavaScript -->
+                    <div class="skeleton" style="width: 100px; height: 60px;"></div>
+                    <div class="skeleton" style="width: 100px; height: 60px;"></div>
+                    <div class="skeleton" style="width: 100px; height: 60px;"></div>
+                </div>
+            </div>
+
+            <!-- Trading Signals -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Trading Signals</div>
+                    <div class="card-icon">🔔</div>
+                </div>
+                <div id="signals-container">
+                    <!-- Signal items will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px;"></div>
+                </div>
+            </div>
+
+            <!-- Market Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Market Overview</div>
+                    <div class="card-icon">🌐</div>
+                </div>
+                <div class="market-stats" id="market-overview">
+                    <!-- Market stats will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Fear & Greed Index -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Fear & Greed Index</div>
+                    <div class="card-icon">😱</div>
+                </div>
+                <div class="fear-greed-container" id="fear-greed">
+                    <!-- Fear & Greed content will be populated by JavaScript -->
+                    <div class="skeleton" style="width: 120px; height: 120px; border-radius: 50%;"></div>
+                </div>
+            </div>
+
+            <!-- Futures Data -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Futures Data</div>
+                    <div class="card-icon">📊</div>
+                </div>
+                <div class="futures-data" id="futures-data">
+                    <!-- Futures data will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Whale Trades -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Whale Trades</div>
+                    <div class="card-icon">🐋</div>
+                </div>
+                <div id="whale-trades">
+                    <!-- Whale trades will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Macro Markets -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Macro Markets</div>
+                    <div class="card-icon">💹</div>
+                </div>
+                <div id="macro-markets">
+                    <!-- Macro markets will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Top Gainers/Losers -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Top Gainers/Losers</div>
+                    <div class="card-icon">🏆</div>
+                </div>
+                <div class="gainers-losers" id="gainers-losers">
+                    <!-- Gainers/Losers will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Crypto News -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Crypto News</div>
+                    <div class="card-icon">📰</div>
+                </div>
+                <div id="crypto-news">
+                    <!-- News items will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px;"></div>
+                </div>
+            </div>
+
+            <!-- Social Sentiment -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Social Sentiment</div>
+                    <div class="card-icon">💬</div>
+                </div>
+                <div id="social-sentiment">
+                    <!-- Sentiment items will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 40px;"></div>
+                </div>
+            </div>
+
+            <!-- Economic Calendar -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Economic Calendar</div>
+                    <div class="card-icon">📅</div>
+                </div>
+                <div id="economic-calendar">
+                    <!-- Calendar items will be populated by JavaScript -->
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                    <div class="skeleton" style="height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Trades -->
+        <div class="card active-trades">
+            <div class="card-header">
+                <div class="card-title">Active Trades</div>
+                <div class="card-icon">💼</div>
+            </div>
+            <table class="trades-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Type</th>
+                        <th>Entry Price</th>
+                        <th>Current Price</th>
+                        <th>PnL</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="active-trades-body">
+                    <!-- Active trades will be populated by JavaScript -->
+                    <tr>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                        <td><div class="skeleton" style="height: 20px;"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Audio Element for Notifications -->
+    <audio id="notification-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // State Management
+        const state = {
+            prices: {},
+            lastUpdates: {},
+            socket: null,
+            abortControllers: {},
+            signalHistory: [],
+            lastSignalTime: null,
+            audioContext: null,
+            activeTrades: []
+        };
+
+        // Configuration
+        const config = {
+            symbols: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'DOGEUSDT', 'DOTUSDT'],
+            primarySymbol: 'BTCUSDT',
+            updateIntervals: {
+                ticker: 1000,
+                signals: 30000,
+                marketOverview: 60000,
+                fearAndGreed: 600000,
+                futuresData: 60000,
+                whaleTrades: 5000,
+                macroMarkets: 60000,
+                gainersLosers: 60000,
+                cryptoNews: 300000,
+                socialSentiment: 60000,
+                economicCalendar: 3600000
+            },
+            signalSettings: {
+                stopLossPercent: 0.6,
+                takeProfitPercent: 0.6,
+                maxSignalsToStore: 50,
+                minSignalInterval: 300000,
+                tradeDuration: 900000
+            }
+        };
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            setupWebSocket();
+            startDataUpdates();
+            loadFromLocalStorage();
+        });
+
+        // Initialize dashboard components
+        function initializeDashboard() {
+            updateLastUpdateTime();
+            initializeAudio();
+        }
+
+        // Update last update time display
+        function updateLastUpdateTime() {
+            const now = new Date();
+            document.getElementById('last-update-time').textContent = now.toLocaleTimeString();
+        }
+
+        // Initialize audio for notifications
+        function initializeAudio() {
+            try {
+                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.warn('Web Audio API not supported, using HTML5 audio fallback');
+            }
+        }
+
+        // Play notification sound
+        function playNotificationSound() {
+            const audio = document.getElementById('notification-sound');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.warn('Audio play failed:', e));
+            }
+        }
+
+        // Setup WebSocket connection for real-time data
+        function setupWebSocket() {
+            try {
+                const streams = config.symbols.map(symbol => `${symbol.toLowerCase()}@ticker`).join('/');
+                state.socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+                
+                state.socket.onopen = function() {
+                    console.log('WebSocket connected');
+                };
+                
+                state.socket.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    if (data.stream && data.data) {
+                        const symbol = data.data.s;
+                        const price = parseFloat(data.data.c);
+                        const change = parseFloat(data.data.P);
+                        
+                        state.prices[symbol] = {
+                            price: price,
+                            change: change
+                        };
+                        
+                        updateTickerDisplay(symbol, price, change);
+                        updateActiveTrades(symbol, price);
+                    }
+                };
+                
+                state.socket.onclose = function() {
+                    console.log('WebSocket disconnected, attempting to reconnect...');
+                    setTimeout(setupWebSocket, 5000);
+                };
+                
+                state.socket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                };
+            } catch (error) {
+                console.error('Failed to setup WebSocket:', error);
+            }
+        }
+
+        // Start periodic data updates
+        function startDataUpdates() {
+            // Initial data fetch
+            fetchAllData();
+            
+            // Set up intervals for different data types
+            setInterval(fetchTickerData, config.updateIntervals.ticker);
+            setInterval(fetchSignalsData, config.updateIntervals.signals);
+            setInterval(fetchMarketOverview, config.updateIntervals.marketOverview);
+            setInterval(fetchFearAndGreed, config.updateIntervals.fearAndGreed);
+            setInterval(fetchFuturesData, config.updateIntervals.futuresData);
+            setInterval(fetchWhaleTrades, config.updateIntervals.whaleTrades);
+            setInterval(fetchMacroMarkets, config.updateIntervals.macroMarkets);
+            setInterval(fetchGainersLosers, config.updateIntervals.gainersLosers);
+            setInterval(fetchCryptoNews, config.updateIntervals.cryptoNews);
+            setInterval(fetchSocialSentiment, config.updateIntervals.socialSentiment);
+            setInterval(fetchEconomicCalendar, config.updateIntervals.economicCalendar);
+        }
+
+        // Fetch all data initially
+        async function fetchAllData() {
+            try {
+                await Promise.all([
+                    fetchTickerData(),
+                    fetchSignalsData(),
+                    fetchMarketOverview(),
+                    fetchFearAndGreed(),
+                    fetchFuturesData(),
+                    fetchWhaleTrades(),
+                    fetchMacroMarkets(),
+                    fetchGainersLosers(),
+                    fetchCryptoNews(),
+                    fetchSocialSentiment(),
+                    fetchEconomicCalendar()
+                ]);
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+            }
+        }
+
+        // Update ticker display with real-time data
+        function updateTickerDisplay(symbol, price, change) {
+            const tickerContainer = document.getElementById('ticker-container');
+            let tickerItem = document.getElementById(`ticker-${symbol}`);
+            
+            if (!tickerItem) {
+                tickerItem = document.createElement('div');
+                tickerItem.className = 'ticker-item';
+                tickerItem.id = `ticker-${symbol}`;
+                
+                const symbolElement = document.createElement('div');
+                symbolElement.className = 'ticker-symbol';
+                symbolElement.textContent = symbol.replace('USDT', '');
+                
+                const priceElement = document.createElement('div');
+                priceElement.className = 'ticker-price';
+                
+                const changeElement = document.createElement('div');
+                changeElement.className = 'ticker-change';
+                
+                tickerItem.appendChild(symbolElement);
+                tickerItem.appendChild(priceElement);
+                tickerItem.appendChild(changeElement);
+                
+                tickerContainer.appendChild(tickerItem);
+            }
+            
+            const priceElement = tickerItem.querySelector('.ticker-price');
+            const changeElement = tickerItem.querySelector('.ticker-change');
+            
+            priceElement.textContent = `$${price.toFixed(2)}`;
+            changeElement.textContent = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+            changeElement.className = `ticker-change ${change >= 0 ? 'positive' : 'negative'}`;
+        }
+
+        // Fetch ticker data (fallback if WebSocket fails)
+        async function fetchTickerData() {
+            for (const symbol of config.symbols) {
+                try {
+                    const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    
+                    const data = await response.json();
+                    const price = parseFloat(data.lastPrice);
+                    const change = parseFloat(data.priceChangePercent);
+                    
+                    state.prices[symbol] = {
+                        price: price,
+                        change: change
+                    };
+                    
+                    updateTickerDisplay(symbol, price, change);
+                } catch (error) {
+                    console.error(`Error fetching ticker data for ${symbol}:`, error);
+                }
+            }
+        }
+
+        // Fetch and generate trading signals
+        async function fetchSignalsData() {
+            try {
+                // For demo purposes, we'll generate mock signals
+                // In a real implementation, you would fetch klines data and calculate indicators
+                const mockSignals = generateMockSignals();
+                displaySignals(mockSignals);
+                
+                // Check for new signals and show notifications
+                checkForNewSignals(mockSignals);
+            } catch (error) {
+                console.error('Error fetching signals data:', error);
+            }
+        }
+
+        // Generate mock trading signals for demonstration
+        function generateMockSignals() {
+            const signals = [];
+            const actions = ['BUY', 'SELL'];
+            const strengths = ['STRONG', 'MODERATE', 'WEAK'];
+            
+            // Generate 3-5 random signals
+            const numSignals = Math.floor(Math.random() * 3) + 2;
+            
+            for (let i = 0; i < numSignals; i++) {
+                const symbol = config.symbols[Math.floor(Math.random() * config.symbols.length)];
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                const strength = strengths[Math.floor(Math.random() * strengths.length)];
+                
+                signals.push({
+                    symbol: symbol,
+                    action: action,
+                    strength: strength,
+                    timestamp: Date.now() - Math.floor(Math.random() * 600000), // Up to 10 minutes ago
+                    price: state.prices[symbol] ? state.prices[symbol].price : (100 + Math.random() * 1000)
+                });
+            }
+            
+            return signals.sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        // Display trading signals
+        function displaySignals(signals) {
+            const signalsContainer = document.getElementById('signals-container');
+            signalsContainer.innerHTML = '';
+            
+            signals.slice(0, 5).forEach(signal => {
+                const signalItem = document.createElement('div');
+                signalItem.className = 'signal-item';
+                
+                const symbolElement = document.createElement('div');
+                symbolElement.className = 'signal-symbol';
+                symbolElement.textContent = signal.symbol.replace('USDT', '');
+                
+                const actionElement = document.createElement('span');
+                actionElement.className = `signal-action ${signal.action === 'BUY' ? 'signal-buy' : 'signal-sell'}`;
+                actionElement.textContent = `${signal.action} (${signal.strength})`;
+                
+                const priceElement = document.createElement('span');
+                priceElement.textContent = `$${signal.price.toFixed(2)}`;
+                priceElement.style.marginLeft = '10px';
+                
+                const timeElement = document.createElement('div');
+                timeElement.className = 'signal-time';
+                timeElement.textContent = formatTimeAgo(signal.timestamp);
+                
+                signalItem.appendChild(symbolElement);
+                signalItem.appendChild(actionElement);
+                signalItem.appendChild(priceElement);
+                signalItem.appendChild(timeElement);
+                
+                signalsContainer.appendChild(signalItem);
+            });
+        }
+
+        // Check for new signals and show notifications
+        function checkForNewSignals(signals) {
+            const now = Date.now();
+            const recentSignals = signals.filter(signal => 
+                now - signal.timestamp < config.updateIntervals.signals
+            );
+            
+            recentSignals.forEach(signal => {
+                // Check if we've already shown this signal
+                const signalKey = `${signal.symbol}-${signal.action}-${signal.timestamp}`;
+                if (!state.signalHistory.includes(signalKey)) {
+                    state.signalHistory.push(signalKey);
+                    
+                    // Keep signal history manageable
+                    if (state.signalHistory.length > config.signalSettings.maxSignalsToStore) {
+                        state.signalHistory.shift();
+                    }
+                    
+                    // Show toast notification
+                    showToastNotification(signal);
+                    
+                    // Play notification sound
+                    playNotificationSound();
+                    
+                    // Save to localStorage
+                    saveToLocalStorage();
+                }
+            });
+        }
+
+        // Show toast notification for new signals
+        function showToastNotification(signal) {
+            const toastContainer = document.getElementById('toast-container');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${signal.action === 'BUY' ? 'toast-buy' : 'toast-sell'}`;
+            
+            const icon = document.createElement('div');
+            icon.className = 'toast-icon';
+            icon.textContent = signal.action === 'BUY' ? '📈' : '📉';
+            
+            const content = document.createElement('div');
+            content.className = 'toast-content';
+            
+            const title = document.createElement('div');
+            title.className = 'toast-title';
+            title.textContent = `${signal.action} Signal: ${signal.symbol.replace('USDT', '')}`;
+            
+            const message = document.createElement('div');
+            message.className = 'toast-message';
+            message.textContent = `${signal.strength} ${signal.action} signal at $${signal.price.toFixed(2)}`;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.textContent = '×';
+            closeBtn.onclick = function() {
+                toast.remove();
+            };
+            
+            content.appendChild(title);
+            content.appendChild(message);
+            toast.appendChild(icon);
+            toast.appendChild(content);
+            toast.appendChild(closeBtn);
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Fetch market overview data
+        async function fetchMarketOverview() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/global');
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayMarketOverview(data.data);
+            } catch (error) {
+                console.error('Error fetching market overview:', error);
+                // Use mock data as fallback
+                displayMarketOverview(getMockMarketOverview());
+            }
+        }
+
+        // Display market overview
+        function displayMarketOverview(data) {
+            const marketOverview = document.getElementById('market-overview');
+            marketOverview.innerHTML = '';
+            
+            const stats = [
+                { label: 'Market Cap', value: `$${formatNumber(data.total_market_cap.usd)}` },
+                { label: '24h Volume', value: `$${formatNumber(data.total_volume.usd)}` },
+                { label: 'BTC Dominance', value: `${data.market_cap_percentage.btc.toFixed(1)}%` },
+                { label: 'ETH Dominance', value: `${data.market_cap_percentage.eth.toFixed(1)}%` }
+            ];
+            
+            stats.forEach(stat => {
+                const statItem = document.createElement('div');
+                statItem.className = 'stat-item';
+                
+                const label = document.createElement('div');
+                label.className = 'stat-label';
+                label.textContent = stat.label;
+                
+                const value = document.createElement('div');
+                value.className = 'stat-value';
+                value.textContent = stat.value;
+                
+                statItem.appendChild(label);
+                statItem.appendChild(value);
+                marketOverview.appendChild(statItem);
+            });
+        }
+
+        // Fetch Fear & Greed Index
+        async function fetchFearAndGreed() {
+            try {
+                const response = await fetch('https://api.alternative.me/fng/?limit=1');
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayFearAndGreed(data.data[0]);
+            } catch (error) {
+                console.error('Error fetching Fear & Greed Index:', error);
+                // Use mock data as fallback
+                displayFearAndGreed({
+                    value: Math.floor(Math.random() * 100).toString(),
+                    value_classification: ['Extreme Fear', 'Fear', 'Neutral', 'Greed', 'Extreme Greed'][Math.floor(Math.random() * 5)]
+                });
+            }
+        }
+
+        // Display Fear & Greed Index
+        function displayFearAndGreed(data) {
+            const fearGreedContainer = document.getElementById('fear-greed');
+            fearGreedContainer.innerHTML = '';
+            
+            const value = parseInt(data.value);
+            const classification = data.value_classification;
+            
+            const valueElement = document.createElement('div');
+            valueElement.className = 'fear-greed-value';
+            valueElement.textContent = value;
+            
+            const labelElement = document.createElement('div');
+            labelElement.className = `fear-greed-label fear-greed-${classification.toLowerCase().replace(' ', '-')}`;
+            labelElement.textContent = classification;
+            
+            fearGreedContainer.appendChild(valueElement);
+            fearGreedContainer.appendChild(labelElement);
+        }
+
+        // Fetch futures data
+        async function fetchFuturesData() {
+            try {
+                const response = await fetch(`https://fapi.binance.com/fapi/v1/fundingRate?symbol=${config.primarySymbol}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayFuturesData(data);
+            } catch (error) {
+                console.error('Error fetching futures data:', error);
+                // Use mock data as fallback
+                displayFuturesData(getMockFuturesData());
+            }
+        }
+
+        // Display futures data
+        function displayFuturesData(data) {
+            const futuresContainer = document.getElementById('futures-data');
+            futuresContainer.innerHTML = '';
+            
+            // Use the latest funding rate
+            const latest = Array.isArray(data) ? data[0] : data;
+            
+            const items = [
+                { label: 'Funding Rate', value: `${(parseFloat(latest.fundingRate) * 100).toFixed(4)}%` },
+                { label: 'Next Funding', value: formatTimeUntil(parseInt(latest.fundingTime)) },
+                { label: 'Open Interest', value: `$${formatNumber(parseFloat(latest.openInterest))}` }
+            ];
+            
+            items.forEach(item => {
+                const futuresItem = document.createElement('div');
+                futuresItem.className = 'futures-item';
+                
+                const label = document.createElement('div');
+                label.textContent = item.label;
+                
+                const value = document.createElement('div');
+                value.textContent = item.value;
+                
+                futuresItem.appendChild(label);
+                futuresItem.appendChild(value);
+                futuresContainer.appendChild(futuresItem);
+            });
+        }
+
+        // Fetch whale trades
+        async function fetchWhaleTrades() {
+            try {
+                const response = await fetch(`https://api.binance.com/api/v3/trades?symbol=${config.primarySymbol}&limit=50`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayWhaleTrades(data);
+            } catch (error) {
+                console.error('Error fetching whale trades:', error);
+                // Use mock data as fallback
+                displayWhaleTrades(generateMockWhaleTrades());
+            }
+        }
+
+        // Display whale trades
+        function displayWhaleTrades(trades) {
+            const whaleTradesContainer = document.getElementById('whale-trades');
+            whaleTradesContainer.innerHTML = '';
+            
+            // Filter for large trades (whale trades)
+            const largeTrades = trades.filter(trade => 
+                parseFloat(trade.quoteQty) > 100000 // Trades over $100,000
+            ).slice(0, 5);
+            
+            if (largeTrades.length === 0) {
+                // If no large trades, use the most recent ones
+                largeTrades.push(...trades.slice(0, 3));
+            }
+            
+            largeTrades.forEach(trade => {
+                const whaleTrade = document.createElement('div');
+                whaleTrade.className = 'whale-trade';
+                
+                const symbol = document.createElement('div');
+                symbol.className = 'whale-symbol';
+                symbol.textContent = trade.symbol.replace('USDT', '');
+                
+                const amount = document.createElement('div');
+                amount.className = 'whale-amount';
+                amount.textContent = `$${formatNumber(parseFloat(trade.quoteQty))}`;
+                
+                const type = document.createElement('div');
+                type.className = `whale-type ${trade.isBuyerMaker ? 'whale-sell' : 'whale-buy'}`;
+                type.textContent = trade.isBuyerMaker ? 'SELL' : 'BUY';
+                
+                whaleTrade.appendChild(symbol);
+                whaleTrade.appendChild(amount);
+                whaleTrade.appendChild(type);
+                whaleTradesContainer.appendChild(whaleTrade);
+            });
+        }
+
+        // Fetch macro markets data
+        async function fetchMacroMarkets() {
+            try {
+                // In a real implementation, you would fetch from financial APIs
+                // For now, we'll use mock data
+                displayMacroMarkets(getMockMacroMarkets());
+            } catch (error) {
+                console.error('Error fetching macro markets:', error);
+            }
+        }
+
+        // Display macro markets
+        function displayMacroMarkets(markets) {
+            const macroMarketsContainer = document.getElementById('macro-markets');
+            macroMarketsContainer.innerHTML = '';
+            
+            markets.forEach(market => {
+                const macroMarket = document.createElement('div');
+                macroMarket.className = 'macro-market';
+                
+                const name = document.createElement('div');
+                name.textContent = market.name;
+                
+                const value = document.createElement('div');
+                value.textContent = market.value;
+                value.className = market.change >= 0 ? 'positive' : 'negative';
+                
+                macroMarket.appendChild(name);
+                macroMarket.appendChild(value);
+                macroMarketsContainer.appendChild(macroMarket);
+            });
+        }
+
+        // Fetch gainers and losers
+        async function fetchGainersLosers() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h');
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayGainersLosers(data);
+            } catch (error) {
+                console.error('Error fetching gainers/losers:', error);
+                // Use mock data as fallback
+                displayGainersLosers(generateMockGainersLosers());
+            }
+        }
+
+        // Display gainers and losers
+        function displayGainersLosers(coins) {
+            const gainersLosersContainer = document.getElementById('gainers-losers');
+            gainersLosersContainer.innerHTML = '';
+            
+            // Sort by 24h change percentage
+            const sorted = [...coins].sort((a, b) => 
+                b.price_change_percentage_24h - a.price_change_percentage_24h
+            );
+            
+            // Top 2 gainers and top 2 losers
+            const topGainers = sorted.slice(0, 2);
+            const topLosers = sorted.slice(-2).reverse();
+            
+            [...topGainers, ...topLosers].forEach(coin => {
+                const glItem = document.createElement('div');
+                glItem.className = 'gl-item';
+                
+                const name = document.createElement('div');
+                name.className = 'gl-name';
+                name.textContent = coin.symbol.toUpperCase();
+                
+                const change = document.createElement('div');
+                change.className = coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative';
+                change.textContent = `${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%`;
+                
+                glItem.appendChild(name);
+                glItem.appendChild(change);
+                gainersLosersContainer.appendChild(glItem);
+            });
+        }
+
+        // Fetch crypto news
+        async function fetchCryptoNews() {
+            try {
+                const response = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN');
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                displayCryptoNews(data.Data);
+            } catch (error) {
+                console.error('Error fetching crypto news:', error);
+                // Use mock data as fallback
+                displayCryptoNews(generateMockNews());
+            }
+        }
+
+        // Display crypto news
+        function displayCryptoNews(news) {
+            const cryptoNewsContainer = document.getElementById('crypto-news');
+            cryptoNewsContainer.innerHTML = '';
+            
+            news.slice(0, 3).forEach(item => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+                
+                const title = document.createElement('div');
+                title.className = 'news-title';
+                title.textContent = item.title;
+                
+                const source = document.createElement('div');
+                source.className = 'news-source';
+                source.textContent = item.source;
+                
+                newsItem.appendChild(title);
+                newsItem.appendChild(source);
+                cryptoNewsContainer.appendChild(newsItem);
+                
+                // Make news items clickable
+                newsItem.style.cursor = 'pointer';
+                newsItem.addEventListener('click', () => {
+                    window.open(item.url, '_blank');
+                });
+            });
+        }
+
+        // Fetch social sentiment
+        async function fetchSocialSentiment() {
+            try {
+                // In a real implementation, you would fetch from social sentiment APIs
+                // For now, we'll use mock data
+                displaySocialSentiment(generateMockSocialSentiment());
+            } catch (error) {
+                console.error('Error fetching social sentiment:', error);
+            }
+        }
+
+        // Display social sentiment
+        function displaySocialSentiment(sentiment) {
+            const socialSentimentContainer = document.getElementById('social-sentiment');
+            socialSentimentContainer.innerHTML = '';
+            
+            sentiment.forEach(item => {
+                const sentimentItem = document.createElement('div');
+                sentimentItem.className = 'sentiment-item';
+                
+                const name = document.createElement('div');
+                name.className = 'sentiment-name';
+                name.textContent = item.name;
+                
+                const value = document.createElement('div');
+                value.className = 'sentiment-value';
+                value.textContent = item.value;
+                value.className += item.positive ? ' positive' : ' negative';
+                
+                sentimentItem.appendChild(name);
+                sentimentItem.appendChild(value);
+                socialSentimentContainer.appendChild(sentimentItem);
+            });
+        }
+
+        // Fetch economic calendar
+        async function fetchEconomicCalendar() {
+            try {
+                // In a real implementation, you would fetch from economic calendar APIs
+                // For now, we'll use mock data
+                displayEconomicCalendar(generateMockEconomicCalendar());
+            } catch (error) {
+                console.error('Error fetching economic calendar:', error);
+            }
+        }
+
+        // Display economic calendar
+        function displayEconomicCalendar(events) {
+            const economicCalendarContainer = document.getElementById('economic-calendar');
+            economicCalendarContainer.innerHTML = '';
+            
+            events.forEach(event => {
+                const calendarItem = document.createElement('div');
+                calendarItem.className = 'calendar-item';
+                
+                const eventElement = document.createElement('div');
+                eventElement.className = 'calendar-event';
+                eventElement.textContent = event.event;
+                
+                const timeElement = document.createElement('div');
+                timeElement.className = 'calendar-time';
+                timeElement.textContent = event.time;
+                
+                calendarItem.appendChild(eventElement);
+                calendarItem.appendChild(timeElement);
+                economicCalendarContainer.appendChild(calendarItem);
+            });
+        }
+
+        // Update active trades with current prices
+        function updateActiveTrades(symbol, currentPrice) {
+            state.activeTrades.forEach(trade => {
+                if (trade.symbol === symbol) {
+                    trade.currentPrice = currentPrice;
+                    trade.pnl = trade.type === 'BUY' ? 
+                        ((currentPrice - trade.entryPrice) / trade.entryPrice) * 100 :
+                        ((trade.entryPrice - currentPrice) / trade.entryPrice) * 100;
+                }
+            });
+            
+            displayActiveTrades();
+        }
+
+        // Display active trades
+        function displayActiveTrades() {
+            const activeTradesBody = document.getElementById('active-trades-body');
+            activeTradesBody.innerHTML = '';
+            
+            if (state.activeTrades.length === 0) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 6;
+                cell.textContent = 'No active trades';
+                cell.style.textAlign = 'center';
+                cell.style.color = 'var(--text-secondary)';
+                row.appendChild(cell);
+                activeTradesBody.appendChild(row);
+                return;
+            }
+            
+            state.activeTrades.forEach(trade => {
+                const row = document.createElement('tr');
+                
+                const symbolCell = document.createElement('td');
+                symbolCell.textContent = trade.symbol.replace('USDT', '');
+                
+                const typeCell = document.createElement('td');
+                typeCell.textContent = trade.type;
+                typeCell.className = trade.type === 'BUY' ? 'positive' : 'negative';
+                
+                const entryCell = document.createElement('td');
+                entryCell.textContent = `$${trade.entryPrice.toFixed(2)}`;
+                
+                const currentCell = document.createElement('td');
+                currentCell.textContent = `$${trade.currentPrice.toFixed(2)}`;
+                
+                const pnlCell = document.createElement('td');
+                pnlCell.textContent = `${trade.pnl >= 0 ? '+' : ''}${trade.pnl.toFixed(2)}%`;
+                pnlCell.className = `trade-pnl ${trade.pnl >= 0 ? 'positive' : 'negative'}`;
+                
+                const timeCell = document.createElement('td');
+                timeCell.textContent = formatTimeAgo(trade.timestamp);
+                
+                row.appendChild(symbolCell);
+                row.appendChild(typeCell);
+                row.appendChild(entryCell);
+                row.appendChild(currentCell);
+                row.appendChild(pnlCell);
+                row.appendChild(timeCell);
+                
+                activeTradesBody.appendChild(row);
+            });
+        }
+
+        // Utility functions
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(2) + 'B';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(2) + 'K';
+            }
+            return num.toFixed(2);
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            
+            if (diff < 60000) {
+                return 'Just now';
+            } else if (diff < 3600000) {
+                return `${Math.floor(diff / 60000)}m ago`;
+            } else if (diff < 86400000) {
+                return `${Math.floor(diff / 3600000)}h ago`;
+            } else {
+                return `${Math.floor(diff / 86400000)}d ago`;
+            }
+        }
+
+        function formatTimeUntil(timestamp) {
+            const now = Date.now();
+            const diff = timestamp - now;
+            
+            if (diff < 0) {
+                return 'Now';
+            } else if (diff < 60000) {
+                return `${Math.floor(diff / 1000)}s`;
+            } else {
+                return `${Math.floor(diff / 60000)}m`;
+            }
+        }
+
+        // Mock data generators
+        function getMockMarketOverview() {
+            return {
+                total_market_cap: { usd: 1500000000000 },
+                total_volume: { usd: 50000000000 },
+                market_cap_percentage: { btc: 42.5, eth: 18.3 }
+            };
+        }
+
+        function getMockFuturesData() {
+            return {
+                fundingRate: (Math.random() * 0.02 - 0.01).toFixed(6),
+                fundingTime: Date.now() + 3600000,
+                openInterest: Math.random() * 1000000000
+            };
+        }
+
+        function generateMockWhaleTrades() {
+            const trades = [];
+            const types = [true, false]; // true for sell, false for buy
+            
+            for (let i = 0; i < 5; i++) {
+                trades.push({
+                    symbol: config.primarySymbol,
+                    quoteQty: (100000 + Math.random() * 900000).toFixed(2),
+                    isBuyerMaker: types[Math.floor(Math.random() * types.length)]
+                });
+            }
+            
+            return trades;
+        }
+
+        function getMockMacroMarkets() {
+            return [
+                { name: 'S&P 500', value: `${(4200 + Math.random() * 200).toFixed(2)}`, change: Math.random() * 2 - 1 },
+                { name: 'NASDAQ', value: `${(13000 + Math.random() * 1000).toFixed(2)}`, change: Math.random() * 2 - 1 },
+                { name: 'DXY', value: `${(100 + Math.random() * 10).toFixed(2)}`, change: Math.random() * 1 - 0.5 },
+                { name: 'Gold', value: `$${(1800 + Math.random() * 200).toFixed(2)}`, change: Math.random() * 2 - 1 }
+            ];
+        }
+
+        function generateMockGainersLosers() {
+            const coins = [];
+            const symbols = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'LTC', 'LINK'];
+            
+            for (let i = 0; i < 10; i++) {
+                coins.push({
+                    symbol: symbols[i],
+                    price_change_percentage_24h: (Math.random() * 40 - 20)
+                });
+            }
+            
+            return coins;
+        }
+
+        function generateMockNews() {
+            const news = [];
+            const titles = [
+                'Bitcoin Surges Past $40,000 as Institutional Interest Grows',
+                'Ethereum 2.0 Upgrade Nears Completion, ETH Price Reacts',
+                'Regulatory Clarity Boosts Crypto Markets',
+                'DeFi Ecosystem Continues to Expand Despite Market Volatility',
+                'NFT Market Shows Signs of Recovery After Months of Decline'
+            ];
+            
+            const sources = ['CoinDesk', 'Cointelegraph', 'The Block', 'Decrypt', 'CryptoSlate'];
+            
+            for (let i = 0; i < 3; i++) {
+                news.push({
+                    title: titles[Math.floor(Math.random() * titles.length)],
+                    source: sources[Math.floor(Math.random() * sources.length)],
+                    url: 'https://example.com'
+                });
+            }
+            
+            return news;
+        }
+
+        function generateMockSocialSentiment() {
+            return [
+                { name: 'Twitter', value: `${(50 + Math.random() * 50).toFixed(1)}%`, positive: Math.random() > 0.5 },
+                { name: 'Reddit', value: `${(50 + Math.random() * 50).toFixed(1)}%`, positive: Math.random() > 0.5 },
+                { name: 'Telegram', value: `${(50 + Math.random() * 50).toFixed(1)}%`, positive: Math.random() > 0.5 },
+                { name: 'Discord', value: `${(50 + Math.random() * 50).toFixed(1)}%`, positive: Math.random() > 0.5 }
+            ];
+        }
+
+        function generateMockEconomicCalendar() {
+            return [
+                { event: 'Fed Interest Rate Decision', time: 'Today, 2:00 PM EST' },
+                { event: 'US CPI Data Release', time: 'Tomorrow, 8:30 AM EST' },
+                { event: 'ECB Press Conference', time: 'In 2 days, 10:30 AM CET' }
+            ];
+        }
+
+        // Local storage functions
+        function saveToLocalStorage() {
+            try {
+                const data = {
+                    signalHistory: state.signalHistory,
+                    activeTrades: state.activeTrades,
+                    lastUpdate: Date.now()
+                };
+                localStorage.setItem('cryptoDashboard', JSON.stringify(data));
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const data = JSON.parse(localStorage.getItem('cryptoDashboard'));
+                if (data) {
+                    state.signalHistory = data.signalHistory || [];
+                    state.activeTrades = data.activeTrades || [];
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+            }
+        }
+
+        // Add some demo active trades
+        function addDemoTrades() {
+            if (state.activeTrades.length === 0) {
+                state.activeTrades = [
+                    {
+                        symbol: 'BTCUSDT',
+                        type: 'BUY',
+                        entryPrice: 45000,
+                        currentPrice: 45250,
+                        pnl: 0.56,
+                        timestamp: Date.now() - 300000 // 5 minutes ago
+                    },
+                    {
+                        symbol: 'ETHUSDT',
+                        type: 'SELL',
+                        entryPrice: 2500,
+                        currentPrice: 2480,
+                        pnl: 0.80,
+                        timestamp: Date.now() - 600000 // 10 minutes ago
+                    }
+                ];
+                displayActiveTrades();
+            }
+        }
+
+        // Initialize demo trades after a short delay
+        setTimeout(addDemoTrades, 2000);
+    </script>
+</body>
+</html>
